@@ -78,7 +78,6 @@ public class ThePathFindingControlFirstRemake : MonoBehaviour
                 if (newCostToNeighbour> neighbor.GCost|| !openset.Contains(neighbor))
                 {
                     neighbor.GCost = newCostToNeighbour;
-                    //TODO Hcost is someThing else.
                     neighbor.HCost = heuristic(neighbor, endPosition);
                     // neighbor.Parent = node;
                     if (!openset.Contains(neighbor) )
@@ -100,16 +99,6 @@ public class ThePathFindingControlFirstRemake : MonoBehaviour
         {
             _grid.Path.Add(node);
         }
-        // List<Node> path = new List<Node>();
-        // Node currentNode = endNode;
-        //
-        // while (currentNode != startNode) {
-        //     path.Add(currentNode);
-        //     currentNode = currentNode.Parent;
-        // }
-        // path.Reverse();
-        //
-        // _grid.Path = path;
 
     }
 

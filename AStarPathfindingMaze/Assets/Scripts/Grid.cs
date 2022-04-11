@@ -15,7 +15,10 @@ public class Grid : MonoBehaviour
     private float _nodeDiameter;
     private int _gridSizeX, _gridSizeY;
     private Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int>();
-   
+    public GameObject cube;
+    [SerializeField] private Material red;
+    [SerializeField]private Material yellow;
+    [SerializeField]private Material blue;
     
 
 
@@ -58,6 +61,7 @@ public class Grid : MonoBehaviour
             for (int y = 0; y < _gridSizeY; y++)
             {
                 Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * _nodeDiameter + nodeRadius) + Vector3.forward * (y * _nodeDiameter + nodeRadius);
+                var temp = Instantiate(cube, worldPoint, Quaternion.identity);
                 bool walkable = !(Physics.CheckSphere(worldPoint,nodeRadius,unWalkableMask));
                 int movementPenalty=0;
                 
@@ -71,7 +75,7 @@ public class Grid : MonoBehaviour
                     }
                 }
                 
-                _grid[x,y] = new Node(walkable,worldPoint, x,y, movementPenalty);
+                _grid[x,y] = new Node( walkable,worldPoint, x,y, temp);
             }
         }
     }
@@ -89,97 +93,7 @@ public class Grid : MonoBehaviour
 
     }
     
-    public List<Node> GetNeighbours(Node node)
-    {
-        List<Node> neighbours = new List<Node>();
-
-        // for (int x = 0; x < node.GridX; x++)
-        // {
-        //     for (int y = 0; y < node.GridY; y++)
-        //     {
-        //         if (node.GridX-1 >= 0 )
-        //         {
-        //             neighbours.Add(_grid[node.GridX-1, node.GridY]);
-        //         }
-        //
-        //         if (node.GridX+1 >=0)
-        //         {
-        //             neighbours.Add(_grid[node.GridX+1, node.GridY]);
-        //         }
-        //
-        //         if (node.GridY-1 >= 0 )
-        //         {
-        //             neighbours.Add(_grid[node.GridX, node.GridY-1]);
-        //         }
-        //
-        //         if (node.GridY+1>= 0)
-        //         {
-        //             neighbours.Add(_grid[node.GridX, node.GridY+1]);
-        //         }
-        //     }
-        // }
-        //TODO add while loop or for
-
-        // for (int x = 0; x < node.GridX; x++)
-        // {
-        //     for (int y = 0; y < node.GridY; y++)
-        //     {
-        //         
-        //     }
-        // }
-        // for (int x = Math.Max(node.GridX-1,0); x < node.GridX+2 && x< _gridSizeX; x++)
-        // {
-        //     for (int y = Math.Max(node.GridY-1,0); y < node.GridY+2&& y < _gridSizeY; y++)
-        //     {
-        //         neighbours.Add(_grid[x,y]);
-        //     }
-        // }
-
-        
-        
-        if (node.GridY+1 >= 0 && node.GridY+1< _gridSizeY)
-        {
-            neighbours.Add(_grid[node.GridX, node.GridY+1]);
-        }
-        
-        if (node.GridX+1 >= 0 && node.GridX+1< _gridSizeX)
-        {
-            neighbours.Add(_grid[node.GridX+1, node.GridY]);
-        }
-        
-        if (node.GridY-1 >= 0 && node.GridY-1< _gridSizeY)
-        {
-            neighbours.Add(_grid[node.GridX, node.GridY-1]);
-        }
-        
-        if (node.GridX-1 >= 0 && node.GridX-1< _gridSizeX)
-        {
-            neighbours.Add(_grid[node.GridX-1, node.GridY]);
-        }
-
-        
-        
-        // for (int x = -1; x <= 1; x++)
-        // {
-        //     for (int y = -1; y <= 1; y++)
-        //     {
-        //         if (x== 0 && y == 0)
-        //         {
-        //             continue;
-        //         }
-        //
-        //         int checkX = node.GridX+x;
-        //         int checkY = node.GridY + y;
-        //         if (checkX>=0 && checkX< _gridSizeX&& checkY>= 0 && checkY< _gridSizeY)
-        //         {
-        //             neighbours.Add(_grid[checkX,checkY]);
-        //         }
-        //     }
-        //     
-        // }
-
-        return neighbours;
-    }
+    
 
     public Node NodeFromWorldPoint(Vector3 worldPosition)
     {
@@ -195,24 +109,27 @@ public class Grid : MonoBehaviour
     
 
     public List<Node> Path;
-    private void OnDrawGizmos()
+    private void Update()
     {
-        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+        // Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
         if (_grid!= null)
         {
             foreach (Node node in _grid)
             {
-                Gizmos.color = (node.Walkable)?Color.yellow : Color.red;
+                Material temp = node.Walkable ? yellow : red;
+                // Gizmos.color = (node.Walkable)?Color.yellow : Color.red;
 
                 if (Path != null)
                 {
                     
                     if (Path.Contains(node))
                     {
-                        Gizmos.color= Color.blue;
+                        // Gizmos.color= Color.blue;
+                        temp = blue;
                     }
                 }
-                Gizmos.DrawCube(node.WorldPosition, Vector3.one * (_nodeDiameter-0.1f));
+                node.mesh.material = temp;
+                // Gizmos.DrawCube(node.WorldPosition, Vector3.one * (_nodeDiameter-0.1f));
             }
         }
     }
